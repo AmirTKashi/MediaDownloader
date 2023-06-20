@@ -16,6 +16,10 @@ st.set_page_config(
 # %% Functions
 pass
 
+# %% Side bar and settings
+download_type = st.sidebar.selectbox(
+    label="File Type", options=["720p", "480p", "360p", "144p", "mp3"]
+)
 
 # %% Main Body
 # Title
@@ -28,21 +32,34 @@ video_url = st.text_input("Paste your URL")
 
 if video_url:
     # Get File
-    video_path = (
-        YouTube(video_url)
-        .streams.filter(res="720p")
-        .first()
-        .download("local_data")
-    )
-    with open(video_path, "rb") as file:
-        video_bytes = file.read()
+    if download_type == "mp3":
+        file_path = (
+            YouTube(video_url)
+            .streams.filter(only_audio=True, abr="128kbps")
+            .first()
+            .download("local_data")
+        )
+    else:
+        file_path = (
+            YouTube(video_url)
+            .streams.filter(res=download_type)
+            .first()
+            .download("local_data")
+        )
+    with open(file_path, "rb") as file:
+        file_bytes = file.read()
 
-    # Video Title and type (mp4, ...)
+    # Video Title
     video_title = YouTube(video_url).vid_info["videoDetails"]["title"]
-    video_type = video_path.split(".")[-1]
+
+    # file type
+    if download_type == "mp3":
+        file_type = download_type
+    else:
+        file_type = file_path.split(".")[-1]
 
     st.download_button(
         label="Download",
-        data=video_bytes,
-        file_name=f"{video_title}.{video_type}",
+        data=file_bytes,
+        file_name=f"{video_title}.{file_type}",
     )
