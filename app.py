@@ -1,6 +1,6 @@
 # %% imports
 # import base64
-import os
+# import os
 import streamlit as st
 from pytube import YouTube
 
@@ -48,10 +48,9 @@ if video_url:
             .download("local_data")
         )
     # test
-    for f in os.listdir("local_data"):
-        st.text(f)
-
-    st.markdown(f"[File Path]({file_path})")
+    # for f in os.listdir("local_data"):
+    #     st.text(f)
+    # st.markdown(f"[File Path]({file_path})")
     with open(file_path, "rb") as file:
         file_bytes = file.read()
 
